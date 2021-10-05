@@ -1,0 +1,18 @@
+{
+    "count": {
+        "twilight sparkle": 4745,
+        "applejack": 2748,
+        "rarity": 2660,
+        "pinkie pie": 2833,
+        "rainbow dash": 3072,
+        "fluttershy": 2109
+    },
+    "verbosity": {
+        "twilight sparkle": 0.13,
+        "applejack": 0.07,
+        "rarity": 0.07,
+        "pinkie pie": 0.08,
+        "rainbow dash": 0.08,
+        "fluttershy": 0.06
+    }
+}
