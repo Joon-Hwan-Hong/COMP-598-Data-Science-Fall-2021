@@ -12,7 +12,9 @@ __version__ = '1.0'
 __maintainer__ = 'Joon Hwan Hong'
 __email__ = 'joon.hong@mail.mcgill.ca'
 
+
 # ================== Imports ==================
+
 
 import json
 from bokeh.layouts import column
@@ -20,7 +22,9 @@ from bokeh.plotting import figure, curdoc
 from bokeh.models import ColumnDataSource, Dropdown, Legend, LegendItem
 from bokeh.models.tickers import SingleIntervalTicker
 
+
 # ================== Functions ==================
+
 
 # Authentication with URL Query
 def check_access(curdoc):
@@ -42,6 +46,7 @@ def dropdown_update1(event):
     plot.y_range.start = 0
     plot.y_range.end = max(max(source_n), max(source.data['ys'][1]), max(monthly_all))
 
+
 def dropdown_update2(event):
     source_n = zip_dict[event.item]
     source.data = dict(colors=[color1, color2, color3], xs=xs, ys=[source.data['ys'][0], source_n, monthly_all])
@@ -49,7 +54,9 @@ def dropdown_update2(event):
     plot.y_range.start = 0
     plot.y_range.end = max(max(source.data['ys'][0]), max(source_n), max(monthly_all))
 
+
 # ================== Server ==================
+
 
 # authenticate URL query
 doc = curdoc()
