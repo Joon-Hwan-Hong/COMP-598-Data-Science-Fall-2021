@@ -50,8 +50,8 @@ def data_preprocess():
     df_nan[1] = pd.to_datetime(df_nan[1], format='%m/%d/%Y %I:%M:%S %p')
     df_nan[2] = pd.to_datetime(df_nan[2], format='%m/%d/%Y %I:%M:%S %p')
 
-    # filter: only keep datapoints if close date > open date
-    df_cleaned = df_nan[df_nan[1] < df_nan[2]]
+    # filter: only keep datapoints if close date >= open date (accepts 0 time diff)
+    df_cleaned = df_nan[df_nan[1] <= df_nan[2]]
 
     # pretty print
     df_cleaned.columns = ['Open', 'Close', 'ZIP']
