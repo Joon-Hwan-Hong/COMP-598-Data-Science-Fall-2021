@@ -3,6 +3,21 @@
 
 """
 DOCSTRING
+Script to clean up incorrect/messy JSON entries, cleaning files containing user posts recorded as JSON data.
+
+Assumption:
+each line in file is a JSON object as a single post.
+
+Function:
+1. remove all posts without 'title' or 'title_text' field
+2. rename all 'title_text field' to 'title'
+3. standardize all times to UTC timezone according to ISO 8601 date and time format
+4. remove all posts of createdAt time that can not be parsed into ISO 8601 date and time format
+5. remove all posts that are not dictionaries
+6. remove all posts that have 'author' field as 'null', None, '', 'N/A', or field does not exist
+7. remove all posts with 'total count' field that is not an integer, float, or string
+8. keep post if 'total_count' field does not exist
+9. separate all words within the list field 'tags' with <<space>> as the delimiter
 """
 
 # header metadata
