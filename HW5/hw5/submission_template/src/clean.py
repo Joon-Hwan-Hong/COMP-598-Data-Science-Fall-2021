@@ -45,8 +45,9 @@ def filter_invalid(input_string):
 def filter_total_count(list_json, key_val='total_count'):
     for dic in list_json:
         try:
-            assert isinstance(dic[key_val], (int, float, str))      # can only be int, float, or str (also 8)
-            dic[key_val] = int(float(dic[key_val]))                 # typecast to int (7)
+            if key_val in dic:                                      # only if total_count exists
+                assert isinstance(dic[key_val], (int, float, str))  # can only be int, float, or str (also 8)
+                dic[key_val] = int(float(dic[key_val]))             # typecast to int (7)
         except:
             list_json.remove(dic)
 
