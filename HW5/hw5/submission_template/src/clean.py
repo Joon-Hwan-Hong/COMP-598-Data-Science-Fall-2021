@@ -15,8 +15,7 @@ __email__ = 'joon.hong@mail.mcgill.ca'
 import json
 import argparse
 import ast
-import pandas as pd
-import numpy as np
+from datetime import datetime
 
 
 # functions
@@ -82,10 +81,35 @@ def filter_title(list_json, key_val=('title', 'title_text')):
 
 def filter_tags(list_json, key_val='tags'):
     for dic in list_json:
-        if key_val in dic:      # set comprehension for each word in string items into a list (9)
+        if key_val in dic:                  # set comprehension for each word in string items into a list (9)
             dic[key_val] = [*{word for line in dic[key_val] for word in line.split()}]
 
     return list_json
+
+
+def filter_datetime(list_json, key_val='createdAt'):
+    for dic in list_json:
+        try:
+            if key_val in dic:              # try and convert into ISO 8601 (3,4)
+                test = datetime.strptime(dic[key_val], '%Y-%m-%dT%H:%M:%S%z')
+                dic[key_val] = test.isoformat()
+        except:
+            list_json.remove(dic)
+
+    return list_json
+
+
+def reorder_keys(list_json, pref_order):
+    new_list = []
+    for dic in list_json:
+        new_dic = {}
+        for key in pref_order:
+            try:
+                new_dic[key] = dic[key]
+            except:
+                pass
+        new_list.append(new_dic)
+    return new_list
 
 
 def main():
@@ -93,18 +117,20 @@ def main():
     str_i, str_o = get_args()
 
     # get list of JSON dictionaries
-    list_j = filter_invalid(str_i)              # filter for 5
-    list_js = filter_total_count(list_j)        # filter for 7, 8
-    list_jso = filter_author(list_js)           # filter for 6
-    list_json = filter_title(list_jso)          # filter for 1, 2
-    list_json_o = filter_tags(list_json)        # filter for 9
+    list_json = filter_invalid(str_i)               # filter for 5
+    list_json = filter_total_count(list_json)       # filter for 7, 8
+    list_json = filter_author(list_json)            # filter for 6
+    list_json = filter_title(list_json)             # filter for 1, 2
+    list_json = filter_tags(list_json)              # filter for 9
+    list_json = filter_datetime(list_json)          # filter for 3, 4
 
-    # TODO: finish filters for # 3, 4
+    # pretty print reordering (not necessary, I just like how it looks)
+    pref_order = ['title', 'createdAt', 'text', 'author', 'total_count', 'tags']
+    list_json = reorder_keys(list_json, pref_order)
 
-    # DEBUGGING
-    for i in range(len(list_json_o)):
-        print(list_json_o[i])
-    print(len(list_json_o))
+    # save to output JSON file
+    with open(str_o, 'w') as f:
+        json.dump(list_json, f, indent=4)
 
 
 if __name__ == "__main__":
