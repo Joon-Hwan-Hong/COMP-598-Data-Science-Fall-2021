@@ -80,6 +80,13 @@ def filter_title(list_json, key_val=('title', 'title_text')):
     return list_json
 
 
+def filter_tags(list_json, key_val='tags'):
+    for dic in list_json:
+        if key_val in dic:      # set comprehension for each word in string items into a list (9)
+            dic[key_val] = [*{word for line in dic[key_val] for word in line.split()}]
+
+    return list_json
+
 
 def main():
     # get script arguments
@@ -90,13 +97,14 @@ def main():
     list_js = filter_total_count(list_j)        # filter for 7, 8
     list_jso = filter_author(list_js)           # filter for 6
     list_json = filter_title(list_jso)          # filter for 1, 2
+    list_json_o = filter_tags(list_json)        # filter for 9
 
-    # TODO: finish filters for # 3, 4, 9
+    # TODO: finish filters for # 3, 4
 
     # DEBUGGING
-    for i in range(len(list_json)):
-        print(list_json[i])
-    print(len(list_json))
+    for i in range(len(list_json_o)):
+        print(list_json_o[i])
+    print(len(list_json_o))
 
 
 if __name__ == "__main__":
