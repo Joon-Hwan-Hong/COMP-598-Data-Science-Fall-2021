@@ -128,9 +128,9 @@ def main():
     pref_order = ['title', 'createdAt', 'text', 'author', 'total_count', 'tags']
     list_json = reorder_keys(list_json, pref_order)
 
-    # save to output JSON file
+    # save one JSON dictionary per line
     with open(str_o, 'w') as f:
-        json.dump(list_json, f, indent=4)
+        f.write('\n'.join(json.dumps(i) for i in list_json))
 
 
 if __name__ == "__main__":
