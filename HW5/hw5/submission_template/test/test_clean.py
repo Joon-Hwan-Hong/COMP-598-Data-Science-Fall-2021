@@ -31,7 +31,7 @@ class CleanTest(unittest.TestCase):
 
     def test_date(self):
         with open(self.fixture2, 'r', encoding='utf-8') as f:
-            print('Checking if date is in ISO 8601 format...')
+            print('Checking if date is in "Date and Time in UTC" ISO 8601 format...')
             data = json.load(f)                         # assert it can be converted with exact ISO 8601 format
             self.assertIsInstance(datetime.strptime(data['createdAt'], '%Y-%m-%dT%H:%M:%S%z'), datetime)
             print('OK')
@@ -54,7 +54,7 @@ class CleanTest(unittest.TestCase):
         with open(self.fixture5, 'r', encoding='utf-8') as f:
             print('Checking if total_count is a str containing a castable number (int or float)...')
             data = json.load(f)
-            self.assertIsInstance(data['total_count'], str)                 # could put (int, float, str) instead
+            self.assertIsInstance(data['total_count'], (int, float, str))
             self.assertIsInstance(int(float(data['total_count'])), int)     # check if would be casted into an int
             print('OK')
 
