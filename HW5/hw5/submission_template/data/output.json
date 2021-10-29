@@ -1,4 +1,3 @@
 {"title": "First title", "createdAt": "2020-10-19T02:56:51+00:00", "text": "Some post content", "author": "druths", "total_count": 12}
-{"title": "Second title", "createdAt": "2020-10-18T02:56:51+00:00", "text": "Some post content", "author": "druths", "total_count": 12, "tags": []}
-{"title": "Third title", "createdAt": "2020-10-17T02:56:51+09:00", "text": "Some post content", "author": "druths", "total_count": 22, "tags": ["science", "annotation", "data"]}
-{"title": "Fourth title", "createdAt": "2020-10-17T02:56:51+07:00", "text": "Some post content", "author": "druths", "total_count": 22, "tags": ["double", "spin", "axel", "Lutz"]}
+{"title": "Third title", "createdAt": "2020-10-16T17:56:51+00:00", "text": "Some post content", "author": "druths", "total_count": 22, "tags": ["data", "science", "annotation"]}
+{"title": "Fourth title", "createdAt": "2020-10-16T19:56:51+00:00", "text": "Some post content", "author": "druths", "total_count": 22, "tags": ["Lutz", "double", "axel", "spin"]}

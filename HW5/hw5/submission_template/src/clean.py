@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 """
-DOCSTRING
 Script to clean up incorrect/messy JSON entries, cleaning files containing user posts recorded as JSON data.
 
 Assumption:
@@ -30,7 +29,7 @@ __email__ = 'joon.hong@mail.mcgill.ca'
 import json
 import argparse
 import ast
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # functions
@@ -62,7 +61,7 @@ def filter_total_count(list_json, key_val='total_count'):
         try:
             if key_val in dic:                                      # only if total_count exists
                 assert isinstance(dic[key_val], (int, float, str))  # can only be int, float, or str (also 8)
-                dic[key_val] = int(float(dic[key_val]))             # typecast to int (7)
+                dic[key_val] = int(dic[key_val])                    # typecast to int (7)
         except:
             list_json.remove(dic)
 
@@ -72,8 +71,8 @@ def filter_total_count(list_json, key_val='total_count'):
 def filter_author(list_json, key_val='author'):
     for dic in list_json:
         try:
-            assert key_val in dic                                   # author needs to exist
-            assert dic[key_val] not in ('', 'N/A', 'null', None)    # author can't be empty, N/A or null (6)
+            if key_val in dic:                                          # author needs to exist
+                assert dic[key_val] not in ('', 'N/A', 'null', None)    # author can't be empty, N/A or null (6)
         except:
             list_json.remove(dic)
 
@@ -99,6 +98,8 @@ def filter_tags(list_json, key_val='tags'):
     for dic in list_json:
         if key_val in dic:                  # set comprehension for each word in string items into a list (9)
             dic[key_val] = [*{word for line in dic[key_val] for word in line.split()}]
+            # if they wanted to keep duplicate tags for some dumb reason
+            # dic[key_val] = [word for line in dic[key_val] for word in line.split()]
 
     return list_json
 
@@ -106,9 +107,9 @@ def filter_tags(list_json, key_val='tags'):
 def filter_datetime(list_json, key_val='createdAt'):
     for dic in list_json:
         try:
-            if key_val in dic:              # try and convert into ISO 8601 (3,4)
-                test = datetime.strptime(dic[key_val], '%Y-%m-%dT%H:%M:%S%z')
-                dic[key_val] = test.isoformat()
+            if key_val in dic:
+                test = datetime.strptime(dic[key_val], '%Y-%m-%dT%H:%M:%S%z')       # convert into ISO 8601
+                dic[key_val] = test.astimezone(timezone.utc).isoformat()            # convert to UTC timezone
         except:
             list_json.remove(dic)
 
