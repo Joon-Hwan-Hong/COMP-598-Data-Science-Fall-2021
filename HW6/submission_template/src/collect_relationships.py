@@ -19,6 +19,7 @@ import requests
 import os.path
 import re
 
+
 # functions
 def get_args():
     parser = argparse.ArgumentParser()
@@ -39,15 +40,21 @@ def load_config(str_cfg):
 
 def get_relation_list(dir_cache, person, json_output):
     # download non-dynamic html page of the person
-    if not os.path.isfile(f'{dir_cache}/{person}'):
-        open(f'{dir_cache}/{person}', 'wb').write(requests.get(f'https://www.whosdatedwho.com/dating/{person}').content)
+    if not os.path.isfile(os.path.join(dir_cache, person)):
+        open(os.path.join(dir_cache, person), 'wb').write(requests.get(f'https://www.whosdatedwho.com/dating/{person}').content)
 
     # get to overall section for the person
-    soup = BeautifulSoup(open(f'{dir_cache}/{person}', 'r', encoding="utf8"), 'html.parser')
+    soup = BeautifulSoup(open(os.path.join(dir_cache, person), 'r', encoding="utf8"), 'html.parser')
     div_person = soup.find('div', class_='ff-panel clearfix')
 
+    # edge case for when an incorrect or non-existing person is put in
+    try:
+        h4_about = div_person.find('h4', class_='ff-auto-about')
+    except AttributeError:
+        json_output[person] = []
+        return
+
     # remove content after the "about" section
-    h4_about = div_person.find('h4', class_='ff-auto-about')
     for item in h4_about.find_next_siblings():
         item.decompose()
     h4_about.decompose()
