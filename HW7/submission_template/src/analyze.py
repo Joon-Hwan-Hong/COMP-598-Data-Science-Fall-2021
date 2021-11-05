@@ -47,9 +47,5 @@ def main():
         json.dump(dic, open(args.output_file, 'r'), indent=4)
 
 
-
-
-
-
 if __name__ == "__main__":
     main()
