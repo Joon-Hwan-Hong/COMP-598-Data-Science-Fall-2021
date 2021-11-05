@@ -20,6 +20,9 @@ __email__ = 'joon.hong@mail.mcgill.ca'
 import json
 import requests
 from requests.auth import HTTPBasicAuth
+from pathlib import Path
+import os, sys
+
 
 
 # functions
@@ -52,7 +55,7 @@ def get_json_files(l_sub, l_pst, headers):
 
 
 def save_json(file_name, list_used):
-    with open(file_name, 'w') as f:
+    with open(os.path.join(Path(__file__).parents[1], file_name), 'w') as f:
         for i in range(0, 10):
             for j in range(0, 100):
                 f.write(f'{json.dumps(list_used[i][j])}\n')
