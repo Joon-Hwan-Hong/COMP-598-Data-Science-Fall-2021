@@ -44,7 +44,7 @@ def main():
     if args.output_file is None:
         print(dic)
     else:
-        json.dump(dic, open(args.output_file, 'r'), indent=4)
+        json.dump(dic, open(args.output_file, 'w'), indent=4)
 
 
 if __name__ == "__main__":
