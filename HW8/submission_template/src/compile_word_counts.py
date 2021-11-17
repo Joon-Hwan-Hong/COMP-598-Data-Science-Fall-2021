@@ -51,6 +51,7 @@ def get_wcs(list_p, list_words, df):
         list_d = df[df['pony'].str.lower() == pony]['dialog'].to_list()
         words_p = [word for dialog in list_d for word in dialog if word in list_words]
         wordcount_p[pony] = pd.Series(words_p).value_counts().to_dict()
+
     return wordcount_p
 
 
