@@ -8,8 +8,10 @@ __maintainer__ = 'Joon Hwan Hong'
 __email__ = 'joon.hong@mail.mcgill.ca'
 
 # imports
+from pathlib import Path
 import pandas as pd
 import argparse
+import os, sys
 import json
 
 
@@ -63,12 +65,14 @@ def save_json(wordcount_p, file_output):
 # main block
 def main():
     # init vars
+    parentdir = Path(__file__).parents[1]
+    sys.path.append(parentdir)
     file_output, file_data = get_args()
     no_punc = str.maketrans('()[],-.?!:;#&', ' ' * 13)
     list_p = ('twilight sparkle', 'applejack', 'rarity', 'pinkie pie', 'rainbow dash', 'fluttershy')
 
     # get init data
-    df, list_stop = get_files(file_data, '../data/stopwords.txt', list_p, no_punc)
+    df, list_stop = get_files(file_data, os.path.join(parentdir, 'data', 'stopwords.txt'), list_p, no_punc)
 
     # get individual word counts
     list_words = get_list_words(df, list_stop)
