@@ -29,6 +29,21 @@ def get_args():
     return args.pony_counts, args.num_words
 
 
+def get_tf_idfs(tf_all, list_p, num_words):
+    dic_out = {}
+    for pony in list_p:
+        list_w_tf = []
+        # make tuple of all words and its tf-idf, then make df and sort by tf-idf value.
+        for word in tf_all[pony].keys():
+            tf_idf = tf_all[pony][word] * log10(len(list_p) / len([0 for p in list_p if word in tf_all[p].keys()]))
+            list_w_tf.append((word, tf_idf))
+        # make temp df to sort by tf-idf values given a pair of word and tf-idf ([0] and [1] respectively)
+        tmp = pd.DataFrame(list_w_tf).sort_values(by=[1], ascending=False)
+        dic_out[pony] = tmp[0].to_list()[0:num_words]
+
+    return dic_out
+
+
 def pretty_print(dic_out):
     data_json = json.dumps(dic_out, indent=4)
     data_json = sub(r'\[\n {7}', '[', data_json)
@@ -41,21 +56,11 @@ def pretty_print(dic_out):
 def main():
     # init & load data
     list_p = ('twilight sparkle', 'applejack', 'rarity', 'pinkie pie', 'rainbow dash', 'fluttershy')
-    len_p = len(list_p)
     file_json, num_words = get_args()
-    dic_out = {}
     with open(file_json, 'r') as file:
         tf_all = json.load(file)
 
-    for pony in list_p:
-        list_w_tf = []
-        # make tuple of all words and its tf-idf, then make df and sort by tf-idf value.
-        for word in tf_all[pony].keys():
-            tf_idf = tf_all[pony][word] * log10(len_p / len([0 for p in list_p if word in tf_all[p].keys()]))
-            list_w_tf.append((word, tf_idf))
-        # make temp df to sort by tf-idf values given a pair of word and tf-idf ([0] and [1] respectively)
-        tmp = pd.DataFrame(list_w_tf).sort_values(by=[1], ascending=False)
-        dic_out[pony] = tmp[0].to_list()[0:num_words]
+    dic_out = get_tf_idfs(tf_all, list_p, num_words)
 
     pretty_print(dic_out)
 
