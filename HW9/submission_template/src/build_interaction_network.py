@@ -73,15 +73,16 @@ def get_most_frequent_characters(df_edges, num_characters):
             counts[row[1]] += row[2]
         else:
             counts[row[1]] = row[2]
-    # get the top <num_characters> of interaction characters
+    # get the top <num_characters> of interaction characters and list of all
     top_chars = [character for (character, count) in Counter(counts).most_common(num_characters)]
+    all_chars = [character for (character, count) in Counter(counts).most_common()]
 
-    return top_chars
+    return top_chars, all_chars
 
 
-def df_to_json(df_edges, list_characters, dir_output):
+def df_to_json(df_edges, dir_output, list_c, list_a):
     # construct desired json dictionary structure
-    dic = dict.fromkeys(list_characters, {})
+    dic = dict.fromkeys(list_a, {})
     for row in df_edges.itertuples(index=False):
         if dic[row[0]] == {}:
             dic[row[0]] = {row[1]: row[2]}
@@ -91,8 +92,8 @@ def df_to_json(df_edges, list_characters, dir_output):
             dic[row[1]] = {row[0]: row[2]}
         else:
             dic[row[1]][row[0]] = row[2]
-    # cleanup: remove values of 0 and write to output
-    dic = {pony: {pony2: val for pony2, val in dic_w0s.items() if val} for pony, dic_w0s in dic.items()}
+    # cleanup: remove values of 0, remove those not in top <n>; and write to output
+    dic = {p1: {p2: val for p2, val in dic_w0s.items() if val} for p1, dic_w0s in dic.items() if p1 in list_c}
     with open(dir_output, 'w') as file:
         json.dump(dic, file, indent=4)
 
@@ -108,14 +109,10 @@ def main():
     g_dir = get_dir_graph(df)
     g_undir = get_undir_graph(g_dir)
 
-    # graph --> df (filter if character is not the top 101 characters in interactions)
+    # graph --> df --> json & filter if not top <n> --> export
     df_edges = nx.convert_matrix.to_pandas_edgelist(g_undir)
-    list_characters = get_most_frequent_characters(df_edges, num_characters=101)
-    df_edges = df_edges[df_edges['source'].isin(list_characters)]
-    df_edges = df_edges[df_edges['target'].isin(list_characters)]
-
-    # df --> json --> export
-    df_to_json(df_edges, list_characters, dir_output)
+    list_characters, list_all = get_most_frequent_characters(df_edges, num_characters=101)
+    df_to_json(df_edges, dir_output, list_characters, list_all)
 
 
 if __name__ == "__main__":
