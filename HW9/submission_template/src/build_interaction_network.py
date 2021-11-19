@@ -41,24 +41,14 @@ def get_a_to_b(df):
     return tmp
 
 
-def get_dir_graph(df):
-    g_dir = nx.from_pandas_edgelist(df, 'pony', 'pony2')
-    counter = Counter(df.value_counts(['pony', 'pony2']).to_dict())
-    for u, v, d in g_dir.edges(data=True):
-        d['weight'] = counter[u, v]
+def get_undir_graph(g_d):
+    g_u = g_d.to_undirected()
+    for node in g_d:
+        for nhbr in nx.neighbors(g_d, node): # neighbour
+            if node in nx.neighbors(g_d, nhbr):
+                g_u.edges[node, nhbr]['weight'] = g_d.edges[node, nhbr]['weight'] + g_d.edges[nhbr, node]['weight']
 
-    return g_dir
-
-
-def get_undir_graph(g_dir):
-    g_undir = g_dir.to_undirected()
-    for node in g_dir:
-        for neighbour in nx.neighbors(g_dir, node):
-            if node in nx.neighbors(g_dir, neighbour):
-                sum_weight = g_dir.edges[node, neighbour]['weight'] + g_dir.edges[neighbour, node]['weight']
-                g_undir.edges[node, neighbour]['weight'] = sum_weight
-
-    return g_undir
+    return g_u
 
 
 def get_most_frequent_characters(df_edges, num_characters):
@@ -106,11 +96,12 @@ def main():
 
     # df {cols= pony1, pony2} --> directed graph --> undirected graph (edge = sum of both direction edges)
     df = get_a_to_b(df)
-    g_dir = get_dir_graph(df)
-    g_undir = get_undir_graph(g_dir)
+    df['weight'] = df.groupby(['pony', 'pony2'])['pony'].transform('size')
+    g_directed = nx.from_pandas_edgelist(df, 'pony', 'pony2', edge_attr='weight')
+    g_undirected = get_undir_graph(g_directed)
 
     # graph --> df --> json & filter if not top <n> --> export
-    df_edges = nx.convert_matrix.to_pandas_edgelist(g_undir)
+    df_edges = nx.convert_matrix.to_pandas_edgelist(g_undirected)
     list_characters, list_all = get_most_frequent_characters(df_edges, num_characters=101)
     df_to_json(df_edges, dir_output, list_characters, list_all)
 
